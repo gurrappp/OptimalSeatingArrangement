@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace OptimalSeatingArrangement.Models
 {
@@ -12,7 +13,15 @@ namespace OptimalSeatingArrangement.Models
         public int Id { get; set; }
         public required string Name { get; set; }
 
+       
         [NotMapped]
-        public Dictionary<string, int> GuestPoints { get; set; } = [];
+        public Dictionary<string, int> GuestPointsDictionairy { get; set; } = [];
+
+        public string GuestPointsJson
+        {
+            get => JsonConvert.SerializeObject(GuestPointsDictionairy);
+            set => GuestPointsDictionairy = JsonConvert.DeserializeObject<Dictionary<string, int>>(value) ?? [];
+        }
+
     }
 }

@@ -49,6 +49,8 @@ namespace OptimalSeatingArrangement.UI
                     case 0:
                         closeApp = true;
                         break;
+                    case 4:
+                        break;
                     default:
                         break;
                 }
