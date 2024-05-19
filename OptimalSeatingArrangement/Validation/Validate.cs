@@ -25,5 +25,16 @@ namespace OptimalSeatingArrangement.Validation
                 return null;
             return input;
         }
+
+        public int? ValidateHappinessPoints(string? points)
+        {
+            if (!int.TryParse(points, out int result))
+            {
+                Console.WriteLine("Wrong input!");
+                return null;
+            }
+
+            return result;
+        }
     }
 }

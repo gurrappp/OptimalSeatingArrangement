@@ -52,6 +52,16 @@ namespace OptimalSeatingArrangement.UI
                     case 0:
                         closeApp = true;
                         break;
+                    case 1:
+                        controller.GetAllGuests();
+                        break;
+                    case 2:
+                        controller.GetAllGuests();
+                        GetGuestByName();
+                        break;
+                    case 3:
+                        UpdateSeatingPoints();
+                        break;
                     case 4:
                         AddGuest();
                         Console.Clear();
@@ -63,10 +73,22 @@ namespace OptimalSeatingArrangement.UI
             }
         }
 
+        public void GetGuestByName()
+        {
+            Console.WriteLine("Name of Guest:");
+            var name = validate.ValidateName(Console.ReadLine());
+            while (string.IsNullOrWhiteSpace(name))
+            {
+                Console.WriteLine("Wrong input, write name in string:");
+                name = validate.ValidateName(Console.ReadLine());
+            }
+            controller.GetGuestByName(name);
+        }
+
         public void AddGuest()
         {
             Console.Clear();
-            Console.WriteLine("Adding Guest");
+            Console.WriteLine("Adding Guest\n");
             bool close = false;
             while (!close)
             {
@@ -81,7 +103,30 @@ namespace OptimalSeatingArrangement.UI
 
                 Console.WriteLine("Add more? write [yes] to add more");
                 var more = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(more) && more != "yes")
+                if (more != "yes")
+                    close = true;
+            }
+        }
+
+        public void UpdateSeatingPoints()
+        {
+            Console.Clear();
+            Console.WriteLine("Updating seating points\n");
+            bool close = false;
+            while (!close)
+            {
+                Console.WriteLine("Name of Guest to update:");
+                var name = validate.ValidateName(Console.ReadLine());
+                while (string.IsNullOrWhiteSpace(name))
+                {
+                    Console.WriteLine("Wrong input, write name in string:");
+                    name = validate.ValidateName(Console.ReadLine());
+                }
+                controller.UpdateSeatingPoints(name);
+
+                Console.WriteLine("Update more? write [yes] to update more");
+                var more = Console.ReadLine();
+                if (more != "yes")
                     close = true;
             }
         }
