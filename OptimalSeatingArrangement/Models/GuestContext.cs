@@ -16,7 +16,7 @@ namespace OptimalSeatingArrangement.Models
         private string connectionString;
         public DbSet<Guest> Guests { get; set; } = null!;
 
-        public GuestContext(DbContextOptions<GuestContext> options) : base(options)
+        public GuestContext()
         {
             IConfigurationRoot configuration =
             new ConfigurationBuilder()
