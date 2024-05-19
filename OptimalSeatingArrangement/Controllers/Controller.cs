@@ -9,6 +9,18 @@ namespace OptimalSeatingArrangement.Controllers
 {
     public class Controller
     {
+
+        public void AddGuest(string name)
+        {
+            using var db = new GuestContext();
+
+            db.Add(new Guest
+            {
+                Name = name
+            });
+
+            db.SaveChanges();
+        }
         
     }
 }

@@ -18,5 +18,12 @@ namespace OptimalSeatingArrangement.Validation
 
             return result;
         }
+
+        public string? ValidateName(string? input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+            return input;
+        }
     }
 }
