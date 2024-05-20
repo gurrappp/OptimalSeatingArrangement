@@ -39,6 +39,7 @@ namespace OptimalSeatingArrangement.UI
                 Console.WriteLine("4 - Add new guest");
                 Console.WriteLine("5 - Remove a guest");
                 Console.WriteLine("6 - Show optimal seating arrangement");
+                Console.WriteLine("7 - Set up database according to example given by customer");
 
                 var option = validate.ValidateMenuOption(Console.ReadLine());
                 if (option == -1)
@@ -65,6 +66,14 @@ namespace OptimalSeatingArrangement.UI
                     case 4:
                         AddGuest();
                         Console.Clear();
+                        break;
+                    case 5:
+                        RemoveGuest();
+                        Console.Clear();
+                        break;
+                    case 7:
+                        controller.RemoveAllGuests();
+                        controller.SetUpDatabase();
                         break;
                     default:
                         break;
@@ -102,6 +111,29 @@ namespace OptimalSeatingArrangement.UI
                 controller.AddGuest(name);
 
                 Console.WriteLine("Add more? write [yes] to add more");
+                var more = Console.ReadLine();
+                if (more != "yes")
+                    close = true;
+            }
+        }
+
+        public void RemoveGuest()
+        {
+            Console.Clear();
+            Console.WriteLine("Removing Guest\n");
+            bool close = false;
+            while (!close)
+            {
+                Console.WriteLine("Name of Guest:");
+                var name = validate.ValidateName(Console.ReadLine());
+                while (string.IsNullOrWhiteSpace(name))
+                {
+                    Console.WriteLine("Wrong input, write name in string:");
+                    name = validate.ValidateName(Console.ReadLine());
+                }
+                controller.RemoveGuest(name);
+
+                Console.WriteLine("Remove more? write [yes] to remove more");
                 var more = Console.ReadLine();
                 if (more != "yes")
                     close = true;
