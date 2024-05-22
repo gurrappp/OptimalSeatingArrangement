@@ -5,9 +5,9 @@ using OptimalSeatingArrangement.UI;
 
 public class Program
 {
-    public static async Task Main()
+    public static void Main()
     {
         var userInput = new UserInput();
-        await userInput.Menu();
+        userInput.Menu();
     }
 }

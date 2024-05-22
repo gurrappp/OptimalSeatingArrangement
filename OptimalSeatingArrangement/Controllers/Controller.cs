@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OptimalSeatingArrangement.TableVizualisation;
+using OptimalSeatingArrangement.Math;
 
 namespace OptimalSeatingArrangement.Controllers
 {
@@ -26,7 +27,7 @@ namespace OptimalSeatingArrangement.Controllers
 
             var guests = db.Guests.Select(x => x).ToList();
 
-            TableVisualizationEngine.ShowTable(GuestToDTO(guests), "Guests");
+            TableVisualizationEngine.ShowTable(GuestToDTO(guests), "Guests", "Seating Points");
         }
 
         public void GetGuestByName(string name)
@@ -40,7 +41,7 @@ namespace OptimalSeatingArrangement.Controllers
                 return;
             }
             
-            TableVisualizationEngine.ShowTable(GuestToDTO(new List<Guest> { guest}), "Guest");
+            TableVisualizationEngine.ShowTable(GuestToDTO(new List<Guest> { guest}), "Guest", "Seating Points");
 
         }
 
@@ -111,34 +112,47 @@ namespace OptimalSeatingArrangement.Controllers
             using var db = new GuestContext();
 
             var guests = db.Guests.Select(x => x).ToList();
-            var seats = new List<Seat>();
-            var table = new Models.Table();
-
-
-            foreach ( var guest in guests) 
+            
+            foreach (var guest in guests)
             {
                 guest.GuestPointsDictionairy = JsonConvert.DeserializeObject<Dictionary<string, int>>(guest.GuestPointsJson) ?? [];
-                if(guest.GuestPointsDictionairy.Count != guests.Count)
+                if (guest.GuestPointsDictionairy.Count != guests.Count -1)
                 {
                     Console.WriteLine("\nAll Guests need to have points to other Guests! please update seating points");
                     return;
                 }
-
-                seats.Add(new Seat
-                {
-                    Guest = guest
-                });
             }
 
-            table.Seats = seats;
+            
+            List<Models.Table> tables = [];
 
-            foreach(var seat in table.Seats)
+            IEnumerable<IEnumerable<Guest>> enumerableTable = guests.GetPermutations();
+            var tempList = enumerableTable.ToList();
+            
+            foreach(var enumerable in tempList)
             {
+                var table = new Models.Table();
+                foreach(var g in enumerable.ToList())
+                {
+                    var guest = new Guest(g);
+                    table.TableGuests?.Add(guest);
+                }
                 
+                table.CalculateHappinessPoints();
+                tables.Add(table);
             }
 
+            
+            var bestTable = tables.MaxBy(x => x.TotalHappinessPoints);
+            
+            if(bestTable?.TableGuests != null)
+                TableVisualizationEngine.ShowBestTable(TableGuestsToDTO(bestTable.TableGuests), new List<string> { "Seating Order", "Name", "Neighbour to the left", "Neighbour to the right"});
+            Console.WriteLine($"\nThe total change of happiness for this table is: {bestTable?.TotalHappinessPoints}\n\n");
         }
 
+        /// <summary>
+        /// Sets up the database according to data sheet given by customer.
+        /// </summary>
         public void SetUpDatabase()
         {
             using var db = new GuestContext();
@@ -281,6 +295,9 @@ namespace OptimalSeatingArrangement.Controllers
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Removes all elements in Guest database table.
+        /// </summary>
         public void RemoveAllGuests()
         {
             using var db = new GuestContext();
@@ -291,6 +308,11 @@ namespace OptimalSeatingArrangement.Controllers
             
         }
 
+        /// <summary>
+        /// Reduces fields to be shown in tableVizualisationEngine for Guest list.
+        /// </summary>
+        /// <param name="guests"></param>
+        /// <returns></returns>
         public List<GuestDTO> GuestToDTO( List<Guest> guests)
         {
             List<GuestDTO> guestToDTO = new List<GuestDTO>();
@@ -304,7 +326,28 @@ namespace OptimalSeatingArrangement.Controllers
             }
 
             return guestToDTO;
-        } 
-        
+        }
+
+        /// <summary>
+        /// Reduces fields to be shown in tableVizualisationEngine for table.TableGuest list.
+        /// </summary>
+        /// <param name="guests"></param>
+        /// <returns></returns>
+        public List<GuestTableListDTO> TableGuestsToDTO(List<Guest> guests)
+        {
+            List<GuestTableListDTO> tableGuestsToDTO = new List<GuestTableListDTO>();
+            foreach(var guest in guests)
+            {
+                tableGuestsToDTO.Add(new GuestTableListDTO
+                {
+                    Index = guests.IndexOf(guest),
+                    Name = guest.Name,
+                    LeftNeighbour = guest.LeftNeighbour.Name,
+                    RightNeighbour = guest.RightNeighbour.Name
+                });
+            }
+
+            return tableGuestsToDTO;
+        }
     }
 }

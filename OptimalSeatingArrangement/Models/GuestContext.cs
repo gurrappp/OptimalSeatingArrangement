@@ -37,16 +37,5 @@ namespace OptimalSeatingArrangement.Models
                         .Build();
             optionsBuilder.UseSqlServer(connectionString);
         }
-
-        //private void SyncGuests()
-        //{
-        //    foreach (var item in this.ChangeTracker.Entries().Where(_ => _.State == EntityState.Added || _.State == EntityState.Modified))
-        //    {
-        //        if (item.Entity is Guest guest)
-        //        {
-        //            guest.GuestPoints[guest.Name] = guest.;
-        //        }
-        //    }
-        //}
     }
 }

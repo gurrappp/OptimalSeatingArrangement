@@ -22,7 +22,7 @@ namespace OptimalSeatingArrangement.UI
         }
 
 
-        public async Task Menu()
+        public void Menu()
         {
             bool closeApp = false;
 
@@ -70,6 +70,9 @@ namespace OptimalSeatingArrangement.UI
                     case 5:
                         RemoveGuest();
                         Console.Clear();
+                        break;
+                    case 6:
+                        controller.OptimalSeatingArrangement();
                         break;
                     case 7:
                         controller.RemoveAllGuests();
